@@ -1,33 +1,49 @@
-*.o
+# Compiled Object files
+**/.DS_Store
+*.slo
 *.lo
-*.la
-Makefile
-Makefile.in
-compile
-config.guess
-config.sub
-depcomp
-install-sh
-configure
-config.log
-config.status
-stamp-h1
-missing
-.deps
-.libs
-aclocal.m4
-autom4te.cache
-config.h
-config.h.in
-config.h.in~
-ltmain.sh
-libtool
+*.o
+*.obj
 
-example/Makefile
-example/Makefile.in
-example/.deps
-example/.dirstamp
-example/.libs
-example/*.o
-example/isp2_example
-example/isp2_example_dyn
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+**/cmake-build-debug
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/install_manifest.txt
+**/CMakeFiles/
+**/CTestTestfile.cmake
+**/Makefile
+**/*.cbp
+**/CMakeScripts
+**/compile_commands.json
+
+#include/ISP2/*
+
+
+## Local 
+
+build/**/*
+
+include/*
+lib/*
+bin/*
+test/test_runner

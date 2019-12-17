@@ -8,7 +8,7 @@ int main() {
 	int fd;
 	isp2_t data;
 
-	fd = open("lc-2.bin",O_RDONLY);
+	fd = open("data/lc-2.bin",O_RDONLY);
 	if (fd == -1) {
 		printf("Open error:(%d) %s\n",errno,strerror(errno));
 	}
