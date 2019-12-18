@@ -130,7 +130,7 @@ uint16_t ISP2::get_next_word(int file) {
   int byte_count = 0;
   do {
     buf[0] = buf[1];
-    result = read(file,&buf[1],1);
+    result = read(file, &buf[1], 1);
     if (result == -1) {
       // Error in read
       //perror("ISP2 read error");
@@ -152,21 +152,21 @@ word_type ISP2::get_word_type(uint16_t word) {
   uint16_t temp = word;
 
   temp &= ISP2_LC2_HEADER_BITS;
-  if (!(temp^ISP2_LC2_HEADER_SIGNATURE)) {
+  if (!(temp ^ ISP2_LC2_HEADER_SIGNATURE)) {
     return ISP2_LC2_HEADER_WORD;
   }
 
   temp = word;
   temp &= ISP2_DATA_BITS;
 
-  if (!(temp^ISP2_DATA_SIGNATURE)) {
+  if (!(temp ^ ISP2_DATA_SIGNATURE)) {
     return ISP2_DATA_WORD;
   }
 
   temp = word;
   temp &= ISP2_HEADER_BITS;
   
-  if (!(temp^ISP2_HEADER_SIGNATURE)) {
+  if (!(temp ^ ISP2_HEADER_SIGNATURE)) {
     return ISP2_HEADER_WORD;
   }
 
