@@ -9,7 +9,8 @@
 
 #include <ncurses.h>
 
-#define ISP2_FLAGS_VERBOSE 0x01;
+#define ISP2_FLAGS_VERBOSE 0x01
+#define ISP2_FLAGS_DELAY 0x02
 
 int main(int argc, char *argv[]) {
   int fd = 0;
@@ -17,13 +18,16 @@ int main(int argc, char *argv[]) {
   int opt = 0;
   isp2_t data;
 
-  while ((opt = getopt(argc, argv, "nt:")) != -1) {
+  while ((opt = getopt(argc, argv, "vd")) != -1) {
     switch (opt) {
       case 'v':
         flags |= ISP2_FLAGS_VERBOSE;
         break;
+      case 'd':
+        flags |= ISP2_FLAGS_DELAY;
+        break;
       default: /* '?' */
-        fprintf(stderr, "Usage: %s [-v] fd\n", argv[0]);
+        fprintf(stderr, "Usage: %s [-v] [-d] fd\n", argv[0]);
         return -1;
     }
   }
@@ -31,7 +35,7 @@ int main(int argc, char *argv[]) {
   printf("flags=%d; optind=%d\n", flags, optind);
 
   if (optind >= argc) {
-    fprintf(stderr, "Expected file descriptor argument after options\n");
+    fprintf(stderr, "Expected file descriptor after options\n");
     return -1;
   }
 
@@ -66,10 +70,11 @@ int main(int argc, char *argv[]) {
 
     refresh();
 
-    //TODO behind simulate flag
     //1 packet (word) every 82 ms (so 1 byte every 41 ms)
     //41ms = 41000 microseconds.
-    usleep(41000);
+    if (flags & ISP2_FLAGS_DELAY) {
+      usleep(41000);
+    }
   }
 
   mvprintw(0, 77, "EOF");
