@@ -7,10 +7,16 @@
 #include <stdio.h>
 #include <getopt.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <termios.h>
+
 #include <ncurses.h>
 
+#define BAUDRATE B9600
 #define ISP2_FLAGS_VERBOSE 0x01
 #define ISP2_FLAGS_DELAY 0x02
+#define ISP2_FLAGS_SERIAL 0x04
 
 const char* statusMessage(int status) {
   switch (status) {
@@ -36,12 +42,13 @@ const char* statusMessage(int status) {
 }
 
 int main(int argc, char *argv[]) {
+  struct termios oldtio, newtio;
   int fd = 0;
   int flags = 0;
   int opt = 0;
   isp2_t data;
 
-  while ((opt = getopt(argc, argv, "vd")) != -1) {
+  while ((opt = getopt(argc, argv, "vds")) != -1) {
     switch (opt) {
       case 'v':
         flags |= ISP2_FLAGS_VERBOSE;
@@ -49,8 +56,11 @@ int main(int argc, char *argv[]) {
       case 'd':
         flags |= ISP2_FLAGS_DELAY;
         break;
-      default: /* '?' */
-        fprintf(stderr, "Usage: %s [-v] [-d] fd\n", argv[0]);
+      case 's':
+        flags |= ISP2_FLAGS_SERIAL;
+        break;
+      default:
+        fprintf(stderr, "Usage: %s [-v] [-d] [-s] fd\n", argv[0]);
         return -1;
     }
   }
@@ -62,7 +72,28 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  fd = open(argv[optind], O_RDONLY);
+  int openFlags = O_RDONLY;
+  if (flags & ISP2_FLAGS_SERIAL) {
+    openFlags |= O_NOCTTY;
+
+    tcgetattr(fd, &oldtio); /* save current port settings */
+    
+    bzero(&newtio, sizeof(newtio));
+    newtio.c_cflag = BAUDRATE | CRTSCTS | CS8 | CLOCAL | CREAD | PARODD;
+    newtio.c_iflag = IGNPAR;
+    newtio.c_oflag = 0;
+    
+    /* set input mode (non-canonical, no echo,...) */
+    newtio.c_lflag = 0;
+      
+    newtio.c_cc[VTIME] = 0; /* inter-character timer unused */
+    newtio.c_cc[VMIN] = 1; /* blocking read until n chars received */
+    
+    tcflush(fd, TCIFLUSH);
+    tcsetattr(fd, TCSANOW, &newtio);
+  }
+
+  fd = open(argv[optind], openFlags);
   if (fd == -1) {
     fprintf(stderr, "Open error: (%d) %s\n", errno, strerror(errno));
     return -1;
@@ -114,6 +145,11 @@ int main(int argc, char *argv[]) {
   mvprintw(0, 77, "EOF");
   getch();
   endwin();
+
+  if (flags & ISP2_FLAGS_SERIAL) {
+    //Restore old tty settings
+    tcsetattr(fd, TCSANOW, &oldtio);
+  }
   
   return 0;
 }
