@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <getopt.h>
 
+#include <ncurses.h>
+
 #define ISP2_FLAGS_VERBOSE 0x01;
 
 int main(int argc, char *argv[]) {
@@ -33,33 +35,38 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-
-  printf("Opening file: %s\n", argv[optind]);
-
   fd = open(argv[optind], O_RDONLY);
   if (fd == -1) {
-    printf("Open error: (%d) %s\n", errno, strerror(errno));
+    fprintf(stderr, "Open error: (%d) %s\n", errno, strerror(errno));
     return -1;
   }
+
+  initscr();
+  noecho();
+  mvprintw(0, 0, "Reading: %s", argv[optind]);
+  refresh();
   
   while (ISP2::isp2_read(fd, data) != -1) {
-    printf("Packet length: %d\n", data.packet_length);
-    printf("Lambda: %f\n", data.lambda / 1000.0);
-    printf("Status: %d\n", data.status);
-    printf("afr_m: %f\n", data.afr_multiplier / 10.0);
-
-    if (data.is_recording) {
-      printf("Recording\n");
-    }
+    //mvprintw(1, 2, "Packet length: %d\n", data.packet_length);
+    mvprintw(1, 0, "Status: %d\n", data.status);
+    mvprintw(2, 0, "Lambda: %0.2f\n", data.lambda / 1000.0);
+    mvprintw(2, 16, "AFR: %2.2f\n", data.afr_multiplier / 10.0);
 
     if (data.is_sensor_data) {
-      printf("Sensor Data\n");
+      mvprintw(1, 12, "Sensor Data\n");
     }
+
+    if (data.is_recording) {
+      mvprintw(1, 24, "Recording\n");
+    }    
     
     if (data.sender_can_log) {
-      printf("Can Log\n");
+      mvprintw(1, 36, "Can Log\n");
     }
   }
+
+  getch();
+  endwin();
   
   return 0;
 }

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.2)
 project(libISP2 C CXX)
 
 set(SOURCE_FILES
-    isp2.cpp
+  isp2.cpp
 )
 
 add_library(ISP2 SHARED STATIC ${SOURCE_FILES})
