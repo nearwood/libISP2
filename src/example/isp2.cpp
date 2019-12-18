@@ -74,35 +74,40 @@ int main(int argc, char *argv[]) {
   refresh();
   
   while (ISP2::isp2_read(fd, data) != -1) {
-    //mvprintw(1, 2, "Packet length: %d\n", data.packet_length);
-    mvprintw(2, 0, "Status: %-12s", statusMessage(data.status));
-    mvprintw(3, 0, "Lambda: %0.2f", data.lambda / 1000.0);
-    mvprintw(3, 13, "(Stoich: %2.2f)", data.afr_multiplier / 10.0);
-
-    if (data.is_sensor_data) {
-      mvprintw(1, 0, "Data: [Sensor]");
-    } else {
-      mvprintw(1, 0, "Data: [      ]");
+    for (int i = 0; i < data.chainCount; ++i) {
+      int screenOffset = i * 5 + 2;
+      mvprintw(screenOffset, 0, "> Sensor %d", i);
+      //mvprintw(screenOffset + 1, 2, "Packet length: %d\n", data.packet_length);
+      mvprintw(screenOffset + 1, 0, "  Status: %-12s", statusMessage(data.chain[i].status));
+      mvprintw(screenOffset + 2, 0, "  Lambda: %0.2f", data.chain[i].lambda / 1000.0);
+      //mvprintw(screenOffset + 2, 13, "(Stoich: %2.2f)", data.afr_multiplier / 10.0);
     }
 
+    // if (data.is_sensor_data) {
+    //   mvprintw(0, 0, "Data: [Sensor]");
+    // } else {
+    //   mvprintw(0, 0, "Data: [      ]");
+    // }
+
     if (data.is_recording) {
-      mvprintw(1, 16, "RECORDING: [ON ]");
+      mvprintw(1, 0, "RECORDING: [ON ]");
     } else {
-      mvprintw(1, 16, "RECORDING: [OFF]");
+      mvprintw(1, 0, "RECORDING: [OFF]");
     }
     
     if (data.sender_can_log) {
-      mvprintw(1, 34, "LOG: [COULD]"); //TODO what?
+      mvprintw(1, 17, "LOGGING: [COULD]"); //TODO what?
     } else {
-      mvprintw(1, 34, "LOG: [NOPE ]"); //TODO what?
+      mvprintw(1, 17, "LOGGING: [NOPE?]"); //TODO huh?
     }
 
     refresh();
 
-    //1 packet (word) every 82 ms (so 1 byte every 41 ms)
-    //41ms = 41000 microseconds.
+    //1 packet (16-bit word) every 82 ms (so 1 byte every 41 ms)
+    //Or did the docs mean all packets every 82ms?
+    //This is not really accurate but close enough to real time.
     if (flags & ISP2_FLAGS_DELAY) {
-      usleep(41000);
+      usleep(41000); //41ms = 41000 microseconds.
     }
   }
 
