@@ -21,6 +21,8 @@ int ISP2::isp2_read(int file, isp2_t& isp_data)
   isp_data.is_sensor_data = ISP2::get_is_sensor(header);
   isp_data.is_recording = ISP2::get_is_recording(header);
   int remaining = isp_data.packet_length;
+  isp_data.chainCount = 0;
+  int i = 0;
   
   // get next word
   while (remaining > 0) {
@@ -29,18 +31,23 @@ int ISP2::isp2_read(int file, isp2_t& isp_data)
 
     switch (ISP2::get_word_type(current_word)) {
       case ISP2_LC2_HEADER_WORD:
-        isp_data.status = ISP2::get_status(current_word);
-        isp_data.afr_multiplier = ISP2::get_afr_multiplier(current_word);
+        isp_data.chainCount += 1;
+        i = isp_data.chainCount - 1;
+
+        isp_data.chain[i].status = ISP2::get_status(current_word);
+
+        //Use the first LM/LC AFR multiplier for all subsequent LC data words in packet
+        if (i == 0) {
+          isp_data.afr_multiplier = ISP2::get_afr_multiplier(current_word);
+        }
         
-        // get next word
         current_word = ISP2::get_next_word(file);
         remaining--;
 
-        // verify is DATA_WORD
         if (ISP2::get_word_type(current_word) == ISP2_DATA_WORD) {
-          isp_data.lambda = ISP2::get_lambda(current_word);
-          if (isp_data.status == ISP2_NORMAL) {
-            isp_data.lambda += 500; // Protocol states "offset by 0.5 Lambda"
+          isp_data.chain[i].lambda = ISP2::get_lambda(current_word);
+          if (isp_data.chain[i].status == ISP2_NORMAL) {
+            isp_data.chain[i].lambda += 500; // Protocol states "offset by 0.5 Lambda"
           }
         }
         break;
@@ -201,5 +208,5 @@ uint16_t ISP2::get_lambda(uint16_t word) {
   word_ptr[0] = word_ptr[0] ^ word_ptr[1];
   #endif /* WORDS_BIGENDIAN */
   
-  return word;	
+  return word;
 }

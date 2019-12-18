@@ -63,14 +63,22 @@ enum word_type {
   ISP2_UNK_WORD
 };
 
-struct isp2_t{
-  uint16_t	lambda;
-  isp2_status	status;
-  uint8_t		afr_multiplier;
-  uint8_t		packet_length;
-  bool  		is_recording;
-  bool  		is_sensor_data;
-  bool  		sender_can_log;
+struct isp2_data_t {
+  isp2_status status;
+  uint16_t    lambda;
+};
+
+struct isp2_t {
+  uint8_t     chainCount;
+  //TODO - Assuming some reasonable default, deal with dynamic realloc later if needed
+  //If porting to C, can't use std::vector anyway.
+  isp2_data_t chain[16];
+
+  uint8_t afr_multiplier;
+  uint8_t packet_length;
+  bool    is_recording;
+  bool    is_sensor_data;
+  bool    sender_can_log;
 };
 
 class ISP2
@@ -91,6 +99,3 @@ class ISP2
 };
 
 #endif
-
-
-
