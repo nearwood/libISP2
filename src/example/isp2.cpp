@@ -39,9 +39,10 @@ int main(int argc, char *argv[]) {
   fd = open(argv[optind], O_RDONLY);
   if (fd == -1) {
     printf("Open error: (%d) %s\n", errno, strerror(errno));
+    return -1;
   }
   
-  while (ISP2::isp2_read(fd,data) != -1) {
+  while (ISP2::isp2_read(fd, data) != -1) {
     printf("Packet length: %d\n", data.packet_length);
     printf("Lambda: %f\n", data.lambda / 1000.0);
     printf("Status: %d\n", data.status);
