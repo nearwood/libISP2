@@ -72,7 +72,7 @@ uint16_t ISP2::get_header(int file) {
   int result;
   do {
     header[0] = header[1];
-    result = read(file,&header[1],1);
+    result = read(file, &header[1], 1);
     if (result == -1) {
       //perror("ISP2 read error");
       return 0;
