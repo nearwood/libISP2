@@ -48,9 +48,9 @@ int main(int argc, char *argv[]) {
   
   while (ISP2::isp2_read(fd, data) != -1) {
     //mvprintw(1, 2, "Packet length: %d\n", data.packet_length);
-    mvprintw(1, 0, "Status: %d\n", data.status);
-    mvprintw(2, 0, "Lambda: %0.2f\n", data.lambda / 1000.0);
-    mvprintw(2, 16, "AFR: %2.2f\n", data.afr_multiplier / 10.0);
+    mvprintw(1, 0, "Status: %d", data.status);
+    mvprintw(2, 0, "Lambda: %0.2f", data.lambda / 1000.0);
+    mvprintw(2, 16, "AFR: %2.2f", data.afr_multiplier / 10.0);
 
     if (data.is_sensor_data) {
       mvprintw(1, 12, "Sensor Data\n");
@@ -63,8 +63,16 @@ int main(int argc, char *argv[]) {
     if (data.sender_can_log) {
       mvprintw(1, 36, "Can Log\n");
     }
+
+    refresh();
+
+    //TODO behind simulate flag
+    //1 packet (word) every 82 ms (so 1 byte every 41 ms)
+    //41ms = 41000 microseconds.
+    usleep(41000);
   }
 
+  mvprintw(0, 77, "EOF");
   getch();
   endwin();
   
