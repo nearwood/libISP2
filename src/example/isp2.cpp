@@ -1,17 +1,44 @@
 #include "../isp2.h"
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
 #include <errno.h>
-//TODO #include <iostream>
+#include <stdio.h>
+#include <getopt.h>
 
-int main() {
-  int fd;
+#define ISP2_FLAGS_VERBOSE 0x01;
+
+int main(int argc, char *argv[]) {
+  int fd = 0;
+  int flags = 0;
+  int opt = 0;
   isp2_t data;
 
-  fd = open("data/lc-2.bin", O_RDONLY);
+  while ((opt = getopt(argc, argv, "nt:")) != -1) {
+    switch (opt) {
+      case 'v':
+        flags |= ISP2_FLAGS_VERBOSE;
+        break;
+      default: /* '?' */
+        fprintf(stderr, "Usage: %s [-v] fd\n", argv[0]);
+        return -1;
+    }
+  }
+
+  printf("flags=%d; optind=%d\n", flags, optind);
+
+  if (optind >= argc) {
+    fprintf(stderr, "Expected file descriptor argument after options\n");
+    return -1;
+  }
+
+
+  printf("Opening file: %s\n", argv[optind]);
+
+  fd = open(argv[optind], O_RDONLY);
   if (fd == -1) {
-    printf("Open error:(%d) %s\n", errno, strerror(errno));
+    printf("Open error: (%d) %s\n", errno, strerror(errno));
   }
   
   while (ISP2::isp2_read(fd,data) != -1) {
