@@ -6,7 +6,7 @@
  *  relevant information.
  *  Makes use of the other private funtions.
  */
-int ISP2::isp2_read(int file,isp2_t& isp_data )
+int ISP2::isp2_read(int file, isp2_t& isp_data)
 {
   uint16_t	header;
   uint16_t	current_word;

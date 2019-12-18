@@ -76,7 +76,7 @@ struct isp2_t{
 class ISP2
 {
   public:
-    static int isp2_read( int file, isp2_t& isp_data );
+    static int isp2_read(int file, isp2_t& isp_data);
   private:
     static uint16_t get_header(int file);
     static bool get_is_recording(uint16_t header);
