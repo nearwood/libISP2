@@ -13,7 +13,7 @@
 
 #include <ncurses.h>
 
-#define BAUDRATE B9600
+#define BAUDRATE B19200
 #define ISP2_FLAGS_VERBOSE 0x01
 #define ISP2_FLAGS_DELAY 0x02
 #define ISP2_FLAGS_SERIAL 0x04
