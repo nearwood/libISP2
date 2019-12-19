@@ -79,12 +79,12 @@ int main(int argc, char *argv[]) {
     tcgetattr(fd, &oldtio); /* save current port settings */
     
     bzero(&newtio, sizeof(newtio));
-    newtio.c_cflag = BAUDRATE | CRTSCTS | CS8 | CLOCAL | CREAD | PARODD;
+    newtio.c_cflag = BAUDRATE | CRTSCTS | CS8 | CLOCAL | CREAD;
     newtio.c_iflag = IGNPAR;
     newtio.c_oflag = 0;
     
-    /* set input mode (non-canonical, no echo,...) */
-    newtio.c_lflag = 0;
+    /* set input mode to raw (non-canonical, no echo,...) */
+    newtio.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
       
     newtio.c_cc[VTIME] = 0; /* inter-character timer unused */
     newtio.c_cc[VMIN] = 1; /* blocking read until n chars received */
