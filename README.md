@@ -25,10 +25,10 @@ make
 #make install #TODO Incomplete
 ```
 
+## TODO
 
-~~This is made to be a shared library, so under Linux you need to do `sudo ldconfig` after 'sudo make install`~~
-
-~~To make examples do `make examples`. You will get two files "isp2_example_dyn" and "isp2_example" the dyn version links to the installed library, the other does not. In order for make examples to not fail, you probably have to run `make install' first.~~
+ - [ ] Use non-blocking IO
+ - [ ] Fix serial port access and dealloc
 
 ## Credits
 * [techie66](https://github.com/techie66) for the [original implementation](https://github.com/techie66/libISP2).
