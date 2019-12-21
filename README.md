@@ -7,7 +7,16 @@ A library designed to provide easy communication with a device sending data via 
 
 The main project is the library, `libISP2`, which attempts to decode a stream that uses the Innovate Serial Protocol and provides a simple API to access any valid data within that stream.
 
-There is an example project that shows basic usage with a file descriptor.
+There is an example project that shows basic usage with a file descriptor:
+
+`/libiSP2_example [-v] [-d] [-s] file`
+
+Where:
+
+* `file` - A file or device node. If a file, should be raw binary output from a supported Innovate device.
+* `-s` - `file` is a serial port (eg. `/dev/ttyS0`, `/dev/ttyUSB0`). Sets up correct baud rate and whatnot to work.
+* `-d` - Add a ~40ms delay to file input to simulate realtime. Don't use this with `-s`.
+* `-v` - Not implemented
 
 ## Details
 
@@ -20,15 +29,19 @@ Until I write more better documentation, please have a look at isp2.h for inform
 ```bash
 git clone https://github.com/nearwood/libISP2
 cd libISP2
-cmake .
+cmake --build build
 make
 #make install #TODO Incomplete
 ```
 
+Binaries would be then located in `buid/bin` and `build/lib`.
+
 ## TODO
 
- - [ ] Use non-blocking IO
- - [ ] Fix serial port access and dealloc
+ - [ ] Use non-blocking IO, and show some kind of RX indicator
+ - [x] Fix serial port access
+ - [ ] Move serial port to library, as optional at compile time
+ - [ ] Qt gauge example
 
 ## Credits
 * [techie66](https://github.com/techie66) for the [original implementation](https://github.com/techie66/libISP2).
