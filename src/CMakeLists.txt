@@ -3,6 +3,7 @@ project(libISP2 C CXX)
 
 set(SOURCE_FILES
   isp2.cpp
+  tty.cpp
 )
 
 add_library(ISP2 SHARED STATIC ${SOURCE_FILES})

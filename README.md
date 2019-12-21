@@ -40,7 +40,8 @@ Binaries would be then located in `buid/bin` and `build/lib`.
 
  - [ ] Use non-blocking IO, and show some kind of RX indicator
  - [x] Fix serial port access
- - [ ] Move serial port to library, as optional at compile time
+ - [x] Move serial port to library, as optional at compile time
+ - [ ] Convert ISP2 library to C, not really using C++ features
  - [ ] Qt gauge example
 
 ## Credits

@@ -7,16 +7,11 @@
 #include <stdio.h>
 #include <getopt.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <termios.h>
-
 #include <ncurses.h>
 
-#define BAUDRATE B19200
 #define ISP2_FLAGS_VERBOSE 0x01
 #define ISP2_FLAGS_DELAY 0x02
-#define ISP2_FLAGS_SERIAL 0x04
+//#define ISP2_FLAGS_SERIAL 0x04
 
 const char* statusMessage(int status) {
   switch (status) {
@@ -41,52 +36,7 @@ const char* statusMessage(int status) {
   }
 }
 
-int setupTTY(int fd, int speed)
-{
-  struct termios tty;
-
-  //tcgetattr(fd, &oldtio); // Save current port settings
-  if (tcgetattr(fd, &tty) < 0) {
-    fprintf(stderr, "Error (%d) from tcgetattr: %s\n", errno, strerror(errno));
-    return -1;
-  }
-
-  //bzero(&tty, sizeof(tty));
-
-  cfsetospeed(&tty, (speed_t)speed);
-  cfsetispeed(&tty, (speed_t)speed);
-
-  tty.c_cflag |= (CLOCAL | CREAD); //Ignore modem controls
-  tty.c_cflag &= ~CSIZE;
-  tty.c_cflag |= CS8; //8 data bits
-  tty.c_cflag &= ~PARENB; //No parity bits
-  tty.c_cflag &= ~CSTOPB; //1 stop bit
-  tty.c_cflag &= ~CRTSCTS; //No hardware flowcontrol
-  //tty.c_cflag = BAUDRATE | CRTSCTS | CS8 | CLOCAL | CREAD;
-  
-  // Setup for non-canonical mode
-  tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL | IXON);
-  //tty.c_iflag = IGNPAR;
-  tty.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
-  //tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
-  tty.c_oflag &= ~OPOST;
-  //tty.c_oflag = 0;
-
-  // Block for VTIME while waiting for VMIN (1 byte or 1 sec)
-  tty.c_cc[VMIN] = 1; //Min character to return
-  tty.c_cc[VTIME] = 1; //Inter-character timer
-
-  //tcflush(fd, TCIFLUSH);
-  if (tcsetattr(fd, TCSANOW, &tty) != 0) {
-    fprintf(stderr, "Error (%d) from tcsetattr: %s\n", errno, strerror(errno));
-    return -1;
-  }
-
-  return 0;
-}
-
 int main(int argc, char *argv[]) {
-  struct termios oldtio, newtio;
   int fd = 0;
   int flags = 0;
   int opt = 0;
@@ -102,7 +52,7 @@ int main(int argc, char *argv[]) {
         flags |= ISP2_FLAGS_DELAY;
         break;
       case 's':
-        flags |= ISP2_FLAGS_SERIAL;
+        flags |= ISP2_FLAGS_SERIAL; //TODO Use different flag than lib
         break;
       default:
         fprintf(stderr, "Usage: %s [-v] [-d] [-s] fd\n", argv[0]);
@@ -118,20 +68,10 @@ int main(int argc, char *argv[]) {
   }
 
   device = argv[optind];
-
-  int openFlags = O_RDONLY;
-  if (flags & ISP2_FLAGS_SERIAL) {
-    openFlags |= O_NOCTTY;
-  }
-
-  fd = open(device, openFlags);
+  fd = ISP2::isp2_open(device, flags & ISP2_FLAGS_SERIAL);
   if (fd == -1) {
     fprintf(stderr, "Open error (%d): %s\n", errno, strerror(errno));
     return -1;
-  }
-
-  if (flags & ISP2_FLAGS_SERIAL) {
-    setupTTY(fd, BAUDRATE);
   }
 
   initscr();
@@ -180,11 +120,6 @@ int main(int argc, char *argv[]) {
   mvprintw(0, 77, "EOF");
   getch();
   endwin();
-
-  if (flags & ISP2_FLAGS_SERIAL) {
-    //Restore old tty settings
-    tcsetattr(fd, TCSANOW, &oldtio);
-  }
   
   return 0;
 }

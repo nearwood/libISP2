@@ -10,6 +10,10 @@
 #include <string.h>
 #include <stddef.h>
 
+#ifndef NO_SERIAL_SUPPORT
+#include "tty.h"
+#endif
+
 #define ISP2_LAMBDA_DIVISOR 1000
 #define ISP2_LAMBDA_OFFSET 500
 
@@ -84,6 +88,7 @@ struct isp2_t {
 class ISP2
 {
   public:
+    static int isp2_open(char *device, int flags);
     static int isp2_read(int file, isp2_t& isp_data);
   private:
     static uint16_t get_header(int file);

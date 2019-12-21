@@ -1,13 +1,38 @@
 #include "isp2.h"
 
-/** The only public function of libISP2
- *  reads from a file descriptor and parses it
+#include <unistd.h>
+#include <fcntl.h>
+#include <string.h>
+#include <errno.h>
+#include <stdio.h>
+
+extern int setupTTY(int fd);
+
+int ISP2::isp2_open(char *device, int flags) {
+  int fd = 0;
+  int openFlags = O_RDONLY | O_NOCTTY;
+
+  fd = open(device, openFlags);
+  if (fd == -1) {
+    fprintf(stderr, "Open error (%d): %s\n", errno, strerror(errno));
+    return -1;
+  }
+
+#ifndef NO_SERIAL_SUPPORT
+  if (flags & ISP2_FLAGS_SERIAL) {
+    setupTTY(fd);
+  }
+#endif
+
+  return fd;
+}
+
+/** Reads from a file descriptor and parses it
  *  to pass back a isp2_t struct containing 
  *  relevant information.
  *  Makes use of the other private funtions.
  */
-int ISP2::isp2_read(int file, isp2_t& isp_data)
-{
+int ISP2::isp2_read(int file, isp2_t& isp_data) {
   uint16_t	header;
   uint16_t	current_word;
 
