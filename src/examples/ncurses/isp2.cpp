@@ -1,4 +1,4 @@
-#include "../isp2.h"
+#include "../../isp2.h"
 
 #include <unistd.h>
 #include <fcntl.h>
