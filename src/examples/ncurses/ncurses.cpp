@@ -18,7 +18,7 @@ const char* statusMessage(int status) {
     case isp2_status::ISP2_NORMAL:
       return "NORMAL";
     case isp2_status::ISP2_O2:
-      return "O2 1/10%";
+      return "O2 READING";
     case isp2_status::ISP2_CALIBRATING:
       return "CALIBRATING";
     case isp2_status::ISP2_NEED_CALIBRATION:
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  printf("flags=%d; optind=%d\n", flags, optind);
+  //printf("flags=%d; optind=%d\n", flags, optind);
 
   if (optind >= argc) {
     fprintf(stderr, "Expected file descriptor after options\n");
@@ -85,9 +85,23 @@ int main(int argc, char *argv[]) {
       mvprintw(screenOffset, 0, "> Sensor %d", i);
       //mvprintw(screenOffset + 1, 2, "Packet length: %d\n", data.packet_length);
       mvprintw(screenOffset + 1, 0, "  Status: %-12s", statusMessage(data.chain[i].status));
-      mvprintw(screenOffset + 2, 0, "  Lambda: %0.2f", data.chain[i].lambda / 1000.0);
-      mvprintw(screenOffset + 2, 13, "  AFR: %02.1f", (data.chain[i].lambda * data.afr_multiplier) / 10000);
-      //mvprintw(screenOffset + 2, 13, "(Stoich: %2.2f)", data.afr_multiplier / 10.0);
+
+      switch (data.chain[i].status) {
+        case isp2_status::ISP2_WARMING:
+          //This is supposed to be "temp in 1/10% of operating temp." whatever that means, seems to go from 0-165/180 depending on sensor. Degrees F/C?
+          mvprintw(screenOffset + 2, 0, "  Warmup: %03d    ", data.chain[i].lambda);
+          break;
+        case isp2_status::ISP2_O2:
+          mvprintw(screenOffset + 2, 0, "  Oxygen: %02.1f%%", data.chain[i].lambda / 10.0);
+          break;
+        case isp2_status::ISP2_NORMAL:
+          mvprintw(screenOffset + 2, 0, "  Lambda: %0.2f", data.chain[i].lambda / 1000.0);
+          mvprintw(screenOffset + 2, 13, "  AFR: %02.1f", (data.chain[i].lambda / 1000.0) * (data.afr_multiplier / 10.0));
+          //mvprintw(screenOffset + 2, 13, "(Stoich: %2.2f)", data.afr_multiplier / 10.0);
+          break;
+        default:
+          break;
+      }
     }
 
     // if (data.is_sensor_data) {
