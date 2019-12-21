@@ -41,9 +41,5 @@
 
 ## Local 
 
-build/**/*
-
-include/*
-lib/*
-bin/*
-test/test_runner
+build
+#test/test_runner

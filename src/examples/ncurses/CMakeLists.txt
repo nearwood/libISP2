@@ -3,7 +3,7 @@ project(libISP2_ncurses)
 
 find_package(Curses REQUIRED)
 
-set(SOURCE_FILES isp2.cpp)
+set(SOURCE_FILES ncurses.cpp)
 
 add_executable(libISP2_ncurses ${SOURCE_FILES})
 target_link_libraries(libISP2_ncurses ISP2)
