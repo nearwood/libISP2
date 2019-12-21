@@ -41,8 +41,10 @@ Binaries would be then located in `buid/bin` and `build/lib`.
  - [ ] Use non-blocking IO, and show some kind of RX indicator
  - [x] Fix serial port access
  - [x] Move serial port to library, as optional at compile time
- - [ ] Convert ISP2 library to C, not really using C++ features
  - [ ] Qt gauge example
+ - [ ] Convert ISP2 library to C, not really using C++ features
+ - [ ] Export NO_SERIAL_SUPPORT to cmake
+
 
 ## Credits
 * [techie66](https://github.com/techie66) for the [original implementation](https://github.com/techie66/libISP2).
