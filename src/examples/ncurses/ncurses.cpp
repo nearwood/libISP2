@@ -86,6 +86,7 @@ int main(int argc, char *argv[]) {
       //mvprintw(screenOffset + 1, 2, "Packet length: %d\n", data.packet_length);
       mvprintw(screenOffset + 1, 0, "  Status: %-12s", statusMessage(data.chain[i].status));
       mvprintw(screenOffset + 2, 0, "  Lambda: %0.2f", data.chain[i].lambda / 1000.0);
+      mvprintw(screenOffset + 2, 13, "  AFR: %02.1f", (data.chain[i].lambda * data.afr_multiplier) / 10000);
       //mvprintw(screenOffset + 2, 13, "(Stoich: %2.2f)", data.afr_multiplier / 10.0);
     }
 
