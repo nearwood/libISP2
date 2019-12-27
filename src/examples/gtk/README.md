@@ -20,3 +20,7 @@ It formats this data into a simple curses output that's updated constantly.
 `libISP2_gtk -s /dev/ttyS0`
 
 ***Note: Don't use `-d` with `-s`***
+
+### Dependencies
+
+* GTK+-3.0

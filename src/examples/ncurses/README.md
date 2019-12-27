@@ -46,3 +46,7 @@ RECORDING: [OFF] LOGGING: [NOPE?]
   Status: O2 READING
   Oxygen: 20.9%
 ```
+
+### Dependencies
+
+* ncurses
