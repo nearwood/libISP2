@@ -34,17 +34,18 @@ make
 #make install #TODO Incomplete
 ```
 
-Binaries would be then located in `buid/bin` and `build/lib`.
+Binaries would be then located in `build/bin` and `build/lib`.
 
 ## TODO
 
- - [ ] Use non-blocking IO, and show some kind of RX indicator
  - [x] Fix serial port access
  - [x] Move serial port to library, as optional at compile time
- - [ ] Qt gauge example
+ - [x] CLI example
+ - [ ] GUI gauge example
  - [ ] Convert ISP2 library to C, not really using C++ features
  - [ ] Export NO_SERIAL_SUPPORT to cmake
-
+ - [ ] Use non-blocking IO, and show some kind of RX indicator
+ - [ ] Add more emojis
 
 ## Credits
 * [techie66](https://github.com/techie66) for the [original implementation](https://github.com/techie66/libISP2).
