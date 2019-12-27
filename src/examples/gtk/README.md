@@ -1,9 +1,15 @@
 # libISP2 GUI example
 
-This console application opens a file or serial port and reads any ISP data.
-It formats this data into a simple curses output that's updated constantly.
+This GTK application opens a file or serial port and reads any ISP data.
+It formats this data into a simple gauge output that's updated constantly.
 
 <!--TODO: Add image -->
+
+## TODO
+
+- [ ] Figure out GTK event loop
+- [ ] Figure out best way to get data from libISP (pthread, GThread, `g_idle_add()`, etc.)
+- [ ] Figure out feature roadmap
 
 ## Usage
 
